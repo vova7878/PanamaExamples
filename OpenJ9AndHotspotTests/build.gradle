@@ -1,0 +1,35 @@
+plugins {
+    alias(libs.plugins.android.application)
+}
+
+android {
+    namespace 'com.v7878.panamatest'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.v7878.panamatest"
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+
+    externalNativeBuild {
+        cmake {
+            path file('src/androidTest/cpp/CMakeLists.txt')
+        }
+    }
+}
+
+dependencies {
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.runner
+    implementation libs.androidpanama
+}

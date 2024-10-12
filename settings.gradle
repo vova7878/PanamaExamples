@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "PanamaExamples"
 include ':HelloFromPanama'
+include ':OpenJ9AndHotspotTests'
