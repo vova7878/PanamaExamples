@@ -29,12 +29,11 @@ public class TestNULLAddress {
                 FunctionDescriptor.ofVoid());
     }
 
-    //TODO
-    @Ignore
+    //TODO: fix
+    @Ignore("Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0")
     @Test(expected = IllegalArgumentException.class)
     public void testNULLVirtual() throws Throwable {
-        MethodHandle mh = LINKER.downcallHandle(
-                FunctionDescriptor.ofVoid());
+        MethodHandle mh = LINKER.downcallHandle(FunctionDescriptor.ofVoid());
         mh.invokeExact(MemorySegment.NULL);
     }
 

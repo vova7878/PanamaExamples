@@ -139,9 +139,9 @@ public class InvalidDownCallTests {
         Assert.assertEquals(result, 19202122);
     }
 
+    //TODO?
+    @Ignore("Hotspot (and my) implementation fails here with Segfault")
     @Test
-    @Ignore
-    //TODO
     public void test_nullSegmentForStructArgument() throws Throwable {
         assertThrows(NullPointerException.class, () -> {
             GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));

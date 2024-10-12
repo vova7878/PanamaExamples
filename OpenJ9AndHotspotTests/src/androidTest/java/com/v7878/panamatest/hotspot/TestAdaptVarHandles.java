@@ -109,8 +109,8 @@ public class TestAdaptVarHandles {
         assertEquals(value, "42");
     }
 
-    //TODO
-    @Ignore
+    //TODO: fix
+    @Ignore("Fix VarHandles.filterValue")
     @Test
     public void testFilterValueComposite() throws Throwable {
         ValueLayout layout = ValueLayout.JAVA_INT;

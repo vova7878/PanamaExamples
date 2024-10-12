@@ -48,8 +48,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-//TODO: adapt for Android
-@Ignore
+//TODO: fix
+@Ignore("Adapt for Android")
 public class LibraryLookupTest {
 
     static final Path JAVA_LIBRARY_PATH = Path.of(System.getProperty("java.library.path"));

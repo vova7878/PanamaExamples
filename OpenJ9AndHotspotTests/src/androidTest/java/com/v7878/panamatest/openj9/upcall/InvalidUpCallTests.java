@@ -57,8 +57,8 @@ public class InvalidUpCallTests {
 
     private static final SymbolLookup nativeLibLookup = SymbolLookup.loaderLookup();
 
+    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
-    @Ignore
     public void test_throwExceptionFromUpcallMethod() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
         VarHandle intHandle1 = structLayout.varHandle(PathElement.groupElement("elem1"));
@@ -86,8 +86,8 @@ public class InvalidUpCallTests {
         }
     }
 
+    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
-    @Ignore
     public void test_nestedUpcall_throwExceptionFromUpcallMethod() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
         VarHandle intHandle1 = structLayout.varHandle(PathElement.groupElement("elem1"));
@@ -115,8 +115,8 @@ public class InvalidUpCallTests {
         }
     }
 
+    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
-    @Ignore
     public void test_nullValueForReturnPtr() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
         VarHandle intHandle1 = structLayout.varHandle(PathElement.groupElement("elem1"));
@@ -143,8 +143,8 @@ public class InvalidUpCallTests {
         }
     }
 
+    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
-    @Ignore
     public void test_nullValueForReturnStruct() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
         VarHandle intHandle1 = structLayout.varHandle(PathElement.groupElement("elem1"));
@@ -198,8 +198,8 @@ public class InvalidUpCallTests {
         }
     }
 
+    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
-    @Ignore
     public void test_nullSegmentForReturnStruct() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
         VarHandle intHandle1 = structLayout.varHandle(PathElement.groupElement("elem1"));
@@ -226,8 +226,8 @@ public class InvalidUpCallTests {
         }
     }
 
+    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
-    @Ignore
     public void test_heapSegmentForReturnPtr() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
         VarHandle intHandle1 = structLayout.varHandle(PathElement.groupElement("elem1"));
@@ -335,8 +335,8 @@ public class InvalidUpCallTests {
         }
     }
 
+    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
-    @Ignore
     public void test_InvalidLinkerOptions_isCritical_2() throws Throwable {
         FunctionDescriptor fd = FunctionDescriptor.of(JAVA_INT, JAVA_INT, ADDRESS);
         MemorySegment functionSymbol = nativeLibLookup.find("captureTrivialOptionByUpcallMH").get();
