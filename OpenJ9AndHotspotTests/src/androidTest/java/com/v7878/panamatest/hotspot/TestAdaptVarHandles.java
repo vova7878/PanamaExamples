@@ -33,7 +33,6 @@ import com.v7878.foreign.ValueLayout;
 import com.v7878.invoke.VarHandle;
 import com.v7878.invoke.VarHandles;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.invoke.MethodHandle;
@@ -109,8 +108,6 @@ public class TestAdaptVarHandles {
         assertEquals(value, "42");
     }
 
-    //TODO: fix
-    @Ignore("Fix VarHandles.filterValue")
     @Test
     public void testFilterValueComposite() throws Throwable {
         ValueLayout layout = ValueLayout.JAVA_INT;
