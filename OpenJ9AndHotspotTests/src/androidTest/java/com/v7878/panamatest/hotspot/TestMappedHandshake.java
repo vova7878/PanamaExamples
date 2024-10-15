@@ -26,13 +26,13 @@ package com.v7878.panamatest.hotspot;
 import static org.junit.Assert.assertTrue;
 
 import com.v7878.foreign.Arena;
+import com.v7878.foreign.FileChannelUtils;
 import com.v7878.foreign.MemorySegment;
 
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import java.nio.file.Files;
@@ -68,26 +68,9 @@ public class TestMappedHandshake {
 
     @Test
     public void testHandshake() throws InterruptedException, IOException {
-        //TODO
-        /*try (FileChannel fileChannel = FileChannel.open(tempPath, StandardOpenOption.READ, StandardOpenOption.WRITE) ;
+        try (FileChannel fileChannel = FileChannel.open(tempPath, StandardOpenOption.READ, StandardOpenOption.WRITE);
              Arena arena = Arena.ofShared()) {
-            MemorySegment segment = fileChannel.map(MapMode.READ_WRITE, 0L, SEGMENT_SIZE, arena);
-            ExecutorService accessExecutor = Executors.newFixedThreadPool(NUM_ACCESSORS + 1);
-            // start handshaker
-            accessExecutor.execute(new Handshaker());
-            Thread.sleep(ACCESS_START_DELAY_MILLIS);
-            // start accessors
-            for (int i = 0 ; i < NUM_ACCESSORS ; i++) {
-                accessExecutor.execute(new MappedSegmentAccessor(segment));
-            }
-
-            accessExecutor.shutdown();
-            assertTrue(accessExecutor.awaitTermination(MAX_EXECUTOR_WAIT_SECONDS, TimeUnit.SECONDS));
-        }*/
-        try (FileChannel fileChannel = FileChannel.open(tempPath,
-                StandardOpenOption.READ, StandardOpenOption.WRITE)) {
-            MappedByteBuffer buffer = fileChannel.map(MapMode.READ_WRITE, 0L, SEGMENT_SIZE);
-            MemorySegment segment = MemorySegment.ofBuffer(buffer);
+            MemorySegment segment = FileChannelUtils.map(fileChannel, MapMode.READ_WRITE, 0L, SEGMENT_SIZE, arena);
             ExecutorService accessExecutor = Executors.newFixedThreadPool(NUM_ACCESSORS + 1);
             // start handshaker
             accessExecutor.execute(new Handshaker());
