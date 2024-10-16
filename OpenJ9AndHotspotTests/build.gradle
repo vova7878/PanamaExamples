@@ -26,10 +26,17 @@ android {
             path file('src/androidTest/cpp/CMakeLists.txt')
         }
     }
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            merges += "META-INF/LICENSE.md"
+            merges += "META-INF/LICENSE-notice.md"
+        }
+    }
 }
 
 dependencies {
-    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.junit4.dataprovider
     androidTestImplementation libs.androidx.runner
     implementation libs.androidpanama
 }

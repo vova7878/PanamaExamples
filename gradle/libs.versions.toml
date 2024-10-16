@@ -1,20 +1,20 @@
 [versions]
-agp = "8.7.0"
+agp = "8.7.1"
 #androidpanama = "v0.0.5-preview"
-androidpanama = "2b0a17c919"
+androidpanama = "6e1caa2420"
 appcompat = "1.7.0"
+junit4Dataprovider = "2.6"
 material = "1.12.0"
 constraintlayout = "2.1.4"
-junitVersion = "1.2.1"
 runner = "1.6.2"
 
 [libraries]
 androidpanama = { module = "com.github.vova7878.PanamaPort:AndroidPanama", version.ref = "androidpanama" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+junit4-dataprovider = { module = "com.tngtech.junit.dataprovider:junit4-dataprovider", version.ref = "junit4Dataprovider" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
