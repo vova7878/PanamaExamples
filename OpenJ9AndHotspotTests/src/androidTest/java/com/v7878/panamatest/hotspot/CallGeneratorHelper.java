@@ -41,10 +41,10 @@ import java.util.stream.Stream;
 
 public class CallGeneratorHelper extends NativeTestHelper {
 
-    static final List<MemoryLayout> STACK_PREFIX_LAYOUTS = Stream.concat(
+    static final List<MemoryLayout> STACK_PREFIX_LAYOUTS = NewApiUtils.toList(Stream.concat(
             Stream.generate(() -> (MemoryLayout) C_LONG_LONG).limit(8),
             Stream.generate(() -> (MemoryLayout) C_DOUBLE).limit(8)
-    ).toList();
+    ));
 
     static SegmentAllocator THROWING_ALLOCATOR = (size, align) -> {
         throw new UnsupportedOperationException();

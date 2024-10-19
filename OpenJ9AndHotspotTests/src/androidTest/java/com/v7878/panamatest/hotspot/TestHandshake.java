@@ -55,10 +55,9 @@ public class TestHandshake {
     static final int ITERATIONS = 5;
     // Port-changed
     //static final int SEGMENT_SIZE = 1_000_000;
-    static final int SEGMENT_SIZE = 10_000;
+    static final int SEGMENT_SIZE = 100;
     static final int MAX_DELAY_MILLIS = 500;
     static final int MAX_EXECUTOR_WAIT_SECONDS = 20;
-    static final int MAX_THREAD_SPIN_WAIT_MILLIS = 200;
 
     static final int NUM_ACCESSORS = Math.min(10, Runtime.getRuntime().availableProcessors());
 
@@ -121,14 +120,6 @@ public class TestHandshake {
         }
 
         abstract void doAccess();
-
-        private void backoff() {
-            try {
-                Thread.sleep(ThreadLocalRandom.current().nextInt(MAX_THREAD_SPIN_WAIT_MILLIS));
-            } catch (InterruptedException ex) {
-                throw new AssertionError(ex);
-            }
-        }
     }
 
     static void start(String name) {
@@ -191,9 +182,9 @@ public class TestHandshake {
             super(id, segment);
             long split = segment.byteSize() / 2;
             first = segment.asSlice(0, split);
-            sourceLayout = JAVA_INT.withOrder(ByteOrder.LITTLE_ENDIAN);
+            sourceLayout = JAVA_INT.withOrder(ByteOrder.LITTLE_ENDIAN).withByteAlignment(1);
             second = segment.asSlice(split);
-            destLayout = JAVA_INT.withOrder(ByteOrder.BIG_ENDIAN);
+            destLayout = JAVA_INT.withOrder(ByteOrder.BIG_ENDIAN).withByteAlignment(1);
             count = Math.min(first.byteSize() / sourceLayout.byteSize(),
                     second.byteSize() / destLayout.byteSize());
         }

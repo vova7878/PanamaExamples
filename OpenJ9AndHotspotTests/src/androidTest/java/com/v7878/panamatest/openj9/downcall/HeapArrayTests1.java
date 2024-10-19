@@ -52,7 +52,7 @@ import java.lang.invoke.MethodHandle;
  * The test suite is mainly intended for the following Clinker API:
  * MethodHandle downcallHandle(MemorySegment symbol, FunctionDescriptor function)
  */
-@Ignore
+@Ignore("LONG TEST GROUP")
 public class HeapArrayTests1 {
     private static Linker linker = Linker.nativeLinker();
     private static int arrayLength = 1024 * 1024;

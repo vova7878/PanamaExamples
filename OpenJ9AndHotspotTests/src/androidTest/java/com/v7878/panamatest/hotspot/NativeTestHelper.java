@@ -52,13 +52,12 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
-import java.util.random.RandomGenerator;
 
 public class NativeTestHelper {
     public static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
     private static final MethodHandle MH_SAVER;
-    private static final RandomGenerator DEFAULT_RANDOM;
+    private static final Random DEFAULT_RANDOM;
 
     static {
         int seed = Integer.getInteger("NativeTestHelper.DEFAULT_RANDOM.seed", ThreadLocalRandom.current().nextInt());
@@ -192,7 +191,7 @@ public class NativeTestHelper {
         return genTestArgs(DEFAULT_RANDOM, descriptor, allocator);
     }
 
-    public static TestValue[] genTestArgs(RandomGenerator random, FunctionDescriptor descriptor, SegmentAllocator allocator) {
+    public static TestValue[] genTestArgs(Random random, FunctionDescriptor descriptor, SegmentAllocator allocator) {
         TestValue[] result = new TestValue[descriptor.argumentLayouts().size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = genTestValue(random, descriptor.argumentLayouts().get(i), allocator);
@@ -210,7 +209,7 @@ public class NativeTestHelper {
         return genTestValue(DEFAULT_RANDOM, layout, allocator);
     }
 
-    public static TestValue genTestValue(RandomGenerator random, MemoryLayout layout, SegmentAllocator allocator) {
+    public static TestValue genTestValue(Random random, MemoryLayout layout, SegmentAllocator allocator) {
         if (layout instanceof StructLayout struct) {
             MemorySegment segment = allocator.allocate(struct);
             List<Consumer<Object>> fieldChecks = new ArrayList<>();
@@ -222,9 +221,8 @@ public class NativeTestHelper {
             return new TestValue(segment, actual -> fieldChecks.forEach(check -> check.accept(actual)));
         } else if (layout instanceof UnionLayout union) {
             MemorySegment segment = allocator.allocate(union);
-            List<MemoryLayout> filteredFields = union.memberLayouts().stream()
-                    .filter(l -> !(l instanceof PaddingLayout))
-                    .toList();
+            List<MemoryLayout> filteredFields = NewApiUtils.toList(union.memberLayouts().stream()
+                    .filter(l -> !(l instanceof PaddingLayout)));
             int fieldIdx = random.nextInt(filteredFields.size());
             MemoryLayout fieldLayout = filteredFields.get(fieldIdx);
             MemoryLayout.PathElement fieldPath = groupElement(fieldLayout.name().orElseThrow());
@@ -266,7 +264,7 @@ public class NativeTestHelper {
         throw new IllegalStateException("Unexpected layout: " + layout);
     }
 
-    private static Consumer<Object> initField(RandomGenerator random, MemorySegment container, MemoryLayout containerLayout,
+    private static Consumer<Object> initField(Random random, MemorySegment container, MemoryLayout containerLayout,
                                               MemoryLayout fieldLayout, MemoryLayout.PathElement fieldPath,
                                               SegmentAllocator allocator) {
         TestValue fieldValue = genTestValue(random, fieldLayout, allocator);

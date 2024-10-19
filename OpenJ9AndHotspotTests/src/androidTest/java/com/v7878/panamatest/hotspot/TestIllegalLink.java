@@ -42,7 +42,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -56,7 +55,7 @@ public class TestIllegalLink extends NativeTestHelper {
     private static final boolean IS_LE = ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN;
 
     private static final MemorySegment DUMMY_TARGET = MemorySegment.ofAddress(1);
-    private static final MethodHandle DUMMY_TARGET_MH = MethodHandles.empty(MethodType.methodType(void.class));
+    private static final MethodHandle DUMMY_TARGET_MH = NewApiUtils.empty(MethodType.methodType(void.class));
     private static final Linker ABI = Linker.nativeLinker();
 
     @Test
@@ -224,16 +223,15 @@ public class TestIllegalLink extends NativeTestHelper {
                     "integer overflow"
             });
         }
-        if (ValueLayout.JAVA_LONG.byteAlignment() == 8) {
+        if (C_LONG_LONG.byteAlignment() == 8) {
             cases.add(new Object[]{
                     FunctionDescriptor.ofVoid(MemoryLayout.structLayout(
-                            ValueLayout.JAVA_LONG,
-                            ValueLayout.JAVA_INT)), // missing trailing padding
+                            C_LONG_LONG, ValueLayout.JAVA_INT)), // missing trailing padding
                     NO_OPTIONS,
                     "has unexpected size"
             });
         }
-        return cases.toArray(Object[][]::new);
+        return cases.toArray(new Object[0][]);
     }
 
     private static ByteOrder nonNativeOrder() {

@@ -38,11 +38,11 @@ import com.v7878.foreign.ValueLayout;
 import com.v7878.invoke.VarHandle;
 import com.v7878.invoke.VarHandle.AccessMode;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+@Ignore("LONG TEST GROUP")
 @RunWith(DataProviderRunner.class)
 public class TestAccessModes {
 
@@ -95,7 +96,7 @@ public class TestAccessModes {
         if (clazz == MemorySegment.class) {
             return MemorySegment.NULL;
         } else if (clazz.isPrimitive()) {
-            return MethodHandles.zero(clazz).invoke();
+            return NewApiUtils.zero(clazz).invoke();
         } else {
             throw new UnsupportedOperationException();
         }

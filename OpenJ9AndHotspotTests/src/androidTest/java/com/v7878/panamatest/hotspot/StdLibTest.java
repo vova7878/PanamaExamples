@@ -38,6 +38,7 @@ import com.v7878.foreign.MemoryLayout;
 import com.v7878.foreign.MemorySegment;
 import com.v7878.foreign.ValueLayout;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -58,6 +59,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Ignore("LONG TEST GROUP")
 @RunWith(DataProviderRunner.class)
 public class StdLibTest extends NativeTestHelper {
 

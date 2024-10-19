@@ -136,7 +136,7 @@ public class TestScope {
         MemorySegment.Scope expectedScope = segment.scope();
         assertEquals(MemorySegment.ofBuffer(buffer).scope(), expectedScope);
         // buffer slices should have same scope
-        ByteBuffer slice = buffer.slice(0, 2);
+        ByteBuffer slice = NewApiUtils.slice(buffer, 0, 2);
         assertEquals(expectedScope, MemorySegment.ofBuffer(slice).scope());
         // buffer views should have same scope
         IntBuffer view = buffer.asIntBuffer();

@@ -41,7 +41,7 @@ public class TestDowncallBase extends CallGeneratorHelper {
     }
 
     static FunctionDescriptor function(Ret ret, List<ParamType> params, List<StructFieldType> fields, List<MemoryLayout> prefix) {
-        List<MemoryLayout> pLayouts = params.stream().map(p -> p.layout(fields)).toList();
+        List<MemoryLayout> pLayouts = NewApiUtils.toList(params.stream().map(p -> p.layout(fields)));
         MemoryLayout[] paramLayouts = Stream.concat(prefix.stream(), pLayouts.stream()).toArray(MemoryLayout[]::new);
         return ret == Ret.VOID ?
                 FunctionDescriptor.ofVoid(paramLayouts) :
