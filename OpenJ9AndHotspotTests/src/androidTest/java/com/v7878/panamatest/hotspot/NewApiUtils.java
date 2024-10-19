@@ -34,6 +34,9 @@ public class NewApiUtils {
                 throw new RuntimeException(e);
             }
         }
+        if (type == boolean.class) {
+            return MethodHandles.constant(type, false);
+        }
         if (type == byte.class) {
             return MethodHandles.constant(type, (byte) 0);
         }
