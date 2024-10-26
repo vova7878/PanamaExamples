@@ -63,7 +63,7 @@ public class TestIntrinsics extends NativeTestHelper {
         }
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] tests() {
         List<RunnableX> testsList = new ArrayList<>();
 

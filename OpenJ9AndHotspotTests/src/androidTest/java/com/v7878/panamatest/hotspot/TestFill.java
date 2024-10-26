@@ -124,14 +124,14 @@ public final class TestFill {
 
     private static final int MAX_SIZE = 1 << 10;
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] sizes() {
         return IntStream.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 23, 32, 63, 128, 256, 511, MAX_SIZE)
                 .mapToObj(value -> new Object[]{value})
                 .toArray(Object[][]::new);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] values() {
         return IntStream.rangeClosed(Byte.MIN_VALUE, Byte.MAX_VALUE)
                 .mapToObj(value -> new Object[]{value})

@@ -120,7 +120,6 @@ public class TestLayouts {
         MemoryLayout seq = MemoryLayout.sequenceLayout(10, ValueLayout.JAVA_INT);
         try (Arena arena = Arena.ofConfined()) {
             MemorySegment segment = arena.allocate(seq);
-            ;
             VarHandle indexHandle = seq.varHandle(MemoryLayout.PathElement.sequenceElement());
             // init segment
             for (int i = 0; i < 10; i++) {
@@ -433,7 +432,7 @@ public class TestLayouts {
         JAVA_INT.scale(0, Long.MAX_VALUE);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] badAlignments() {
         LayoutKind[] layoutKinds = LayoutKind.values();
         Object[][] values = new Object[layoutKinds.length * 2][2];
@@ -444,7 +443,7 @@ public class TestLayouts {
         return values;
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] layoutKinds() {
         return Stream.of(LayoutKind.values())
                 .map(lk -> new Object[]{lk})
@@ -465,28 +464,28 @@ public class TestLayouts {
         }
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] basicLayouts() {
         return Stream.of(basicLayouts)
                 .map(l -> new Object[]{l})
                 .toArray(Object[][]::new);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] basicLayoutsAndAddress() {
         return Stream.concat(Stream.of(basicLayouts), Stream.of(ADDRESS))
                 .map(l -> new Object[]{l})
                 .toArray(Object[][]::new);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] basicLayoutsAndAddressAndGroups() {
         return Stream.concat(Stream.concat(Stream.of(basicLayouts), Stream.of(ADDRESS)), groupLayoutStream())
                 .map(l -> new Object[]{l})
                 .toArray(Object[][]::new);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] layoutsAndAlignments() {
         List<Object[]> layoutsAndAlignments = new ArrayList<>();
         int i = 0;
@@ -517,14 +516,14 @@ public class TestLayouts {
         return layoutsAndAlignments.toArray(new Object[0][]);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] groupLayouts() {
         return groupLayoutStream()
                 .map(l -> new Object[]{l})
                 .toArray(Object[][]::new);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] validCarriers() {
         return Stream.of(
                         boolean.class,

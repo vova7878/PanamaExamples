@@ -203,7 +203,7 @@ public class TestAccessModes {
         };
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] segmentsAndLayoutsAndModes() {
         List<Object[]> segmentsAndLayouts = new ArrayList<>();
         for (MemorySegment segment : segments()) {

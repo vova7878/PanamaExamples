@@ -570,7 +570,7 @@ public class TestArrayCopy {
         };
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] copyModesAndHelpers() {
         CopyHelper<?, ?>[] helpers = {CopyHelper.BYTE, CopyHelper.CHAR, CopyHelper.SHORT, CopyHelper.INT,
                 CopyHelper.FLOAT, CopyHelper.LONG, CopyHelper.DOUBLE};

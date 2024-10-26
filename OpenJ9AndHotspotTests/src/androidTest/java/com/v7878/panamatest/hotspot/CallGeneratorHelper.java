@@ -152,7 +152,7 @@ public class CallGeneratorHelper extends NativeTestHelper {
         }
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] functions() {
         int functions = 0;
         List<Object[]> downcalls = new ArrayList<>();

@@ -146,7 +146,8 @@ public class TestArrays {
         arrayFactory.apply(segment);
     }
 
-    @DataProvider()
+    @DataProvider(format = "%m[%i]")
+
     public static Object[][] nativeAccessOps() {
         Consumer<MemorySegment> byteInitializer =
                 (base) -> initBytes(base, bytes, (addr, pos) -> byteHandle.set(addr, 0L, pos, (byte) (long) pos));
@@ -189,7 +190,8 @@ public class TestArrays {
         };
     }
 
-    @DataProvider()
+    @DataProvider(format = "%m[%i]")
+
     public static Object[][] elemLayouts() {
         return new Object[][]{
                 {JAVA_BYTE, (Function<MemorySegment, Object>) s -> s.toArray(JAVA_BYTE)},

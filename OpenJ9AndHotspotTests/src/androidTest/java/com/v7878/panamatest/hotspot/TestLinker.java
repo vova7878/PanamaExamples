@@ -69,7 +69,7 @@ public class TestLinker extends NativeTestHelper {
         assertNotSame(mh1, mh2);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] notSameCases() {
         FunctionDescriptor fd_II_V = FunctionDescriptor.ofVoid(C_INT, C_INT);
         return new Object[][]{
@@ -89,7 +89,7 @@ public class TestLinker extends NativeTestHelper {
         assertSame(mh1, mh2);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] namedDescriptors() {
         List<Object[]> cases = new ArrayList<>(Arrays.asList(new Object[][]{
                 {FunctionDescriptor.ofVoid(C_INT),
@@ -126,7 +126,7 @@ public class TestLinker extends NativeTestHelper {
         return cases.toArray(new Object[0][]);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] invalidIndexCases() {
         return new Object[][]{
                 {-1,},
@@ -161,7 +161,7 @@ public class TestLinker extends NativeTestHelper {
         assertTrue(layout instanceof ValueLayout);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] canonicalTypeNames() {
         return new Object[][]{
                 {"bool"},

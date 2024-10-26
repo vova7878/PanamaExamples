@@ -358,21 +358,21 @@ public class StdLibTest extends NativeTestHelper {
 
     /*** data providers ***/
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] ints() {
         return perms(0, new Integer[]{0, 1, 2, 3, 4}).stream()
                 .map(l -> new Object[]{l})
                 .toArray(Object[][]::new);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] strings() {
         return perms(0, new String[]{"a", "b", "c"}).stream()
                 .map(l -> new Object[]{String.join("", l)})
                 .toArray(Object[][]::new);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] stringPairs() {
         Object[][] strings = strings();
         Object[][] stringPairs = new Object[strings.length * strings.length][];
@@ -385,7 +385,7 @@ public class StdLibTest extends NativeTestHelper {
         return stringPairs;
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] instants() {
         Instant start = ZonedDateTime.of(LocalDateTime.parse("2017-01-01T00:00:00"), ZoneOffset.UTC).toInstant();
         Instant end = ZonedDateTime.of(LocalDateTime.parse("2017-12-31T00:00:00"), ZoneOffset.UTC).toInstant();
@@ -397,7 +397,7 @@ public class StdLibTest extends NativeTestHelper {
         return instants;
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] printfArgs() {
         ArrayList<List<PrintfArg>> res = new ArrayList<>();
         List<List<PrintfArg>> perms = new ArrayList<>(perms(0, PrintfArg.values()));

@@ -100,7 +100,6 @@ public class TestSharedAccess {
     public void testSharedUnsafe() throws Throwable {
         try (Arena arena = Arena.ofShared()) {
             MemorySegment s = arena.allocate(4, 1);
-            ;
             setInt(s, 42);
             assertEquals(getInt(s), 42);
             List<Thread> threads = new ArrayList<>();
@@ -122,19 +121,16 @@ public class TestSharedAccess {
 
     @Test
     public void testOutsideConfinementThread() throws Throwable {
-        CountDownLatch a = new CountDownLatch(1);
         CountDownLatch b = new CountDownLatch(1);
         CompletableFuture<?> r;
         try (Arena arena = Arena.ofConfined()) {
             MemoryLayout layout = MemoryLayout.sequenceLayout(2, ValueLayout.JAVA_INT);
             MemorySegment s1 = arena.allocate(layout);
-            ;
             r = CompletableFuture.runAsync(() -> {
                 try {
                     ByteBuffer bb = s1.asByteBuffer();
 
                     MemorySegment s2 = MemorySegment.ofBuffer(bb);
-                    a.countDown();
 
                     try {
                         b.await();
@@ -148,7 +144,6 @@ public class TestSharedAccess {
                 }
             });
 
-            a.await();
             setInt(s1.asSlice(4), 42);
         }
 

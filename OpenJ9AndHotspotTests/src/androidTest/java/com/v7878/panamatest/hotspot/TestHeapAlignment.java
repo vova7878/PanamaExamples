@@ -108,7 +108,7 @@ public class TestHeapAlignment {
         }
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] layouts() {
         List<Object[]> layouts = new ArrayList<>();
         for (SegmentAndAlignment testCase : SegmentAndAlignment.values()) {

@@ -286,7 +286,7 @@ public class TestHandshake {
         AbstractSegmentAccessor make(int id, MemorySegment segment, Arena arena);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] accessors() {
         return new Object[][]{
                 {"SegmentAccessor", (AccessorFactory) SegmentAccessor::new},

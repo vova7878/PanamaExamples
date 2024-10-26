@@ -290,7 +290,7 @@ public class TestLayoutPaths {
         }
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] groupSelectors() {
         return new Object[][]{
                 {(IntFunction<PathElement>) PathElement::groupElement}, // by index
@@ -451,7 +451,7 @@ public class TestLayoutPaths {
         assertEquals(e.toString(), "dereferenceElement()");
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] testLayouts() {
         List<Object[]> testCases = new ArrayList<>();
 

@@ -90,7 +90,7 @@ public class TestIllegalLink extends NativeTestHelper {
 
     // where
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] illegalCaptureState() {
         if (!IS_WINDOWS) {
             return new Object[][]{
@@ -101,7 +101,7 @@ public class TestIllegalLink extends NativeTestHelper {
         return new Object[][]{};
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] downcallOnlyOptions() {
         return new Object[][]{
                 {Linker.Option.firstVariadicArg(0)},
@@ -110,7 +110,7 @@ public class TestIllegalLink extends NativeTestHelper {
         };
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] types() {
         Linker.Option[] NO_OPTIONS = new Linker.Option[0];
         List<Object[]> cases = new ArrayList<>(Arrays.asList(new Object[][]{

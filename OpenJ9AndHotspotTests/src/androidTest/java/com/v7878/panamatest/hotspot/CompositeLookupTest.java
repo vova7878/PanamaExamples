@@ -83,7 +83,7 @@ public class CompositeLookupTest {
     record Failure(String name) implements Result {
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] testCases() {
         return new Object[][]{
                 {
