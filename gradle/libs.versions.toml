@@ -1,7 +1,7 @@
 [versions]
 agp = "8.7.1"
 #androidpanama = "v0.0.5-preview"
-androidpanama = "88773ebf7b"
+androidpanama = "669650b1b1"
 appcompat = "1.7.0"
 junit4Dataprovider = "2.6"
 material = "1.12.0"
