@@ -312,7 +312,6 @@ public class TestAsyncSocketChannels extends AbstractChannelsTest {
                 initial = false;
             }
             out.print(".");
-            Thread.onSpinWait();
         }
         out.println("outstanding writes: " + outstandingWriteOps.get());
     }
@@ -388,7 +387,7 @@ public class TestAsyncSocketChannels extends AbstractChannelsTest {
         }
 
         TestHandler assertFailedWith(Class<? extends Exception> expectedException) {
-            assertTrue("Expected type:%s, got:%s".formatted(expectedException, throwable),
+            assertTrue(String.format("Expected type:%s, got:%s", expectedException, throwable),
                     expectedException.isInstance(throwable));
             assertEquals("Unexpected result: " + result, result, null);
             return this;

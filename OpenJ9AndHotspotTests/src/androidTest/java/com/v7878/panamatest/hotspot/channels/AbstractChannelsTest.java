@@ -118,13 +118,13 @@ public class AbstractChannelsTest {
     }
 
     static void assertMessage(Exception ex, String msg) {
-        assertTrue("Expected [%s], in: [%s]".formatted(msg, ex.getMessage()), ex.getMessage().contains(msg));
+        assertTrue(String.format("Expected [%s], in: [%s]", msg, ex.getMessage()), ex.getMessage().contains(msg));
     }
 
     static void assertCauses(Throwable ex, Class<? extends Exception>... exceptions) {
         for (var expectedClass : exceptions) {
             ex = ex.getCause();
-            assertTrue("Expected %s, got: %s".formatted(expectedClass, ex), expectedClass.isInstance(ex));
+            assertTrue(String.format("Expected %s, got: %s", expectedClass, ex), expectedClass.isInstance(ex));
         }
     }
 
