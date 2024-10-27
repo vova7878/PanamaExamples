@@ -7,6 +7,14 @@ cmake_minimum_required(VERSION 3.22.1)
 project("panamatest")
 
 add_library(
+        CaptureCallState # Sets the name of the library.
+        SHARED # Sets the library as a shared library.
+
+        # Provides a relative path to source file(s).
+        hotspot/libCaptureCallState.c
+)
+
+add_library(
         TestDowncallStack # Sets the name of the library.
         SHARED # Sets the library as a shared library.
 
