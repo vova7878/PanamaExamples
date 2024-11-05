@@ -1,11 +1,11 @@
 [versions]
-agp = "8.7.1"
+agp = "8.7.2"
 #androidpanama = "v0.0.5-preview"
-androidpanama = "d0c1beed47"
+androidpanama = "dc9d15237f"
 appcompat = "1.7.0"
 junit4Dataprovider = "2.6"
 material = "1.12.0"
-constraintlayout = "2.1.4"
+constraintlayout = "2.2.0"
 runner = "1.6.2"
 
 [libraries]
