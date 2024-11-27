@@ -27,8 +27,12 @@ import static com.v7878.foreign.MemoryLayout.paddingLayout;
 import static com.v7878.foreign.MemoryLayout.sequenceLayout;
 import static com.v7878.foreign.MemoryLayout.structLayout;
 import static com.v7878.foreign.MemoryLayout.unionLayout;
+import static com.v7878.foreign.ValueLayout.JAVA_BYTE;
 import static com.v7878.foreign.ValueLayout.JAVA_CHAR;
+import static com.v7878.foreign.ValueLayout.JAVA_INT;
+import static com.v7878.foreign.ValueLayout.JAVA_LONG;
 import static com.v7878.foreign.ValueLayout.JAVA_SHORT;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
@@ -41,6 +45,9 @@ import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import com.v7878.foreign.FunctionDescriptor;
 import com.v7878.foreign.Linker;
 import com.v7878.foreign.MemoryLayout;
+import com.v7878.foreign.PaddingLayout;
+import com.v7878.foreign.SequenceLayout;
+import com.v7878.foreign.StructLayout;
 import com.v7878.foreign.ValueLayout;
 
 import org.junit.Test;
@@ -159,6 +166,108 @@ public class TestLinker extends NativeTestHelper {
         MemoryLayout layout = LINKER.canonicalLayouts().get(typeName);
         assertNotNull(layout);
         assertTrue(layout instanceof ValueLayout);
+    }
+
+    @Test
+    public void embeddedPaddingLayout() {
+        PaddingLayout padding = MemoryLayout.paddingLayout(64).withByteAlignment(64);
+        SequenceLayout sequence = MemoryLayout.sequenceLayout(2, padding);
+        StructLayout struct = MemoryLayout.structLayout(sequence);
+        FunctionDescriptor fd = FunctionDescriptor.of(struct, struct);
+        Linker linker = Linker.nativeLinker();
+        var x = assertThrows(IllegalArgumentException.class, () -> linker.downcallHandle(fd));
+        assertTrue(x.getMessage().contains("not supported because a sequence of a padding layout is not allowed"));
+    }
+
+    @Test
+    public void groupLayoutWithOnlyPadding() {
+        PaddingLayout padding = MemoryLayout.paddingLayout(1);
+        StructLayout struct = MemoryLayout.structLayout(padding);
+        FunctionDescriptor fd = FunctionDescriptor.of(struct, struct);
+        Linker linker = Linker.nativeLinker();
+        var x = assertThrows(IllegalArgumentException.class, () -> linker.downcallHandle(fd));
+        assertTrue(x.getMessage().contains("is non-empty and only has padding layouts"));
+    }
+
+    @Test
+    public void interwovenPadding() {
+        Linker linker = Linker.nativeLinker();
+        var padding1 = MemoryLayout.paddingLayout(1);
+        var padding2 = MemoryLayout.paddingLayout(2).withByteAlignment(2);
+        var struct = MemoryLayout.structLayout(JAVA_BYTE, padding1, padding2, JAVA_INT);
+        var fd = FunctionDescriptor.of(struct, struct, struct);
+        var e = assertThrows(IllegalArgumentException.class, () -> linker.downcallHandle(fd));
+        assertEquals(e.getMessage(),
+                "The padding layout x2 was preceded by another padding layout x1 in [b1x1x2i4]8");
+    }
+
+    @Test
+    public void stackedPadding() {
+        Linker linker = Linker.nativeLinker();
+        var struct32 = MemoryLayout.structLayout(MemoryLayout.sequenceLayout(4, JAVA_LONG));
+        var padding1 = MemoryLayout.paddingLayout(1);
+        var padding2 = MemoryLayout.paddingLayout(2).withByteAlignment(2);
+        var padding4 = MemoryLayout.paddingLayout(4).withByteAlignment(4);
+        var padding8 = MemoryLayout.paddingLayout(8).withByteAlignment(8);
+        var padding16 = MemoryLayout.paddingLayout(16).withByteAlignment(16);
+        var padding32 = MemoryLayout.paddingLayout(32).withByteAlignment(32);
+        var union = MemoryLayout.unionLayout(struct32, padding32);
+        var struct = MemoryLayout.structLayout(JAVA_BYTE, padding1, padding2, padding4, padding8, padding16, union);
+        var fd = FunctionDescriptor.of(struct, struct, struct);
+        var e = assertThrows(IllegalArgumentException.class, () -> linker.downcallHandle(fd));
+        assertEquals(e.getMessage(),
+                "The padding layout x2 was preceded by another padding layout x1 in [b1x1x2x4x8x16[[[4:j8]32]32|x32]32]64");
+    }
+
+    @Test
+    public void paddingUnionByteSize3() {
+        Linker linker = Linker.nativeLinker();
+        var union = MemoryLayout.unionLayout(MemoryLayout.paddingLayout(3), JAVA_INT);
+        var fd = FunctionDescriptor.of(union, union, union);
+        var e = assertThrows(IllegalArgumentException.class, () -> linker.downcallHandle(fd));
+        assertEquals(e.getMessage(), "Superfluous padding x3 in [x3|i4]4");
+    }
+
+    @Test
+    public void paddingUnionByteSize4() {
+        Linker linker = Linker.nativeLinker();
+        var union = MemoryLayout.unionLayout(MemoryLayout.paddingLayout(4), JAVA_INT);
+        var fd = FunctionDescriptor.of(union, union, union);
+        var e = assertThrows(IllegalArgumentException.class, () -> linker.downcallHandle(fd));
+        assertEquals(e.getMessage(), "Superfluous padding x4 in [x4|i4]4");
+    }
+
+    @Test
+    public void paddingUnionByteSize5() {
+        Linker linker = Linker.nativeLinker();
+        var union = MemoryLayout.unionLayout(MemoryLayout.paddingLayout(5), JAVA_INT);
+        var fd = FunctionDescriptor.of(union, union, union);
+        var e = assertThrows(IllegalArgumentException.class, () -> linker.downcallHandle(fd));
+        assertEquals(e.getMessage(), "Layout '[x5|i4]5' has unexpected size: 5 != 4");
+    }
+
+    @Test
+    public void paddingUnionSeveral() {
+        Linker linker = Linker.nativeLinker();
+        var union = MemoryLayout.unionLayout(
+                MemoryLayout.sequenceLayout(3, JAVA_INT),
+                JAVA_INT,
+                MemoryLayout.paddingLayout(16),
+                MemoryLayout.paddingLayout(16));
+        var fd = FunctionDescriptor.of(union, union, union);
+        var e = assertThrows(IllegalArgumentException.class, () -> linker.downcallHandle(fd));
+        assertEquals(e.getMessage(), "More than one padding in [[3:i4]12|i4|x16|x16]16");
+    }
+
+    @Test
+    public void sequenceOfZeroElements() {
+        Linker linker = Linker.nativeLinker();
+        var sequence0a4 = MemoryLayout.sequenceLayout(0, JAVA_INT);
+        var sequence3a1 = MemoryLayout.sequenceLayout(3, JAVA_BYTE);
+        var padding1a1 = MemoryLayout.paddingLayout(1);
+        var struct4a4 = MemoryLayout.structLayout(sequence0a4, sequence3a1, padding1a1);
+        var fd = FunctionDescriptor.of(struct4a4, struct4a4, struct4a4);
+        linker.downcallHandle(fd);
     }
 
     @DataProvider(format = "%m[%i]")
