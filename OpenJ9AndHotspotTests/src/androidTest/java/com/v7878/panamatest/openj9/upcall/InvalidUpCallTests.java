@@ -21,11 +21,11 @@
  */
 package com.v7878.panamatest.openj9.upcall;
 
+import static com.v7878.foreign.Linker.Option.allowExceptions;
 import static com.v7878.foreign.ValueLayout.ADDRESS;
 import static com.v7878.foreign.ValueLayout.JAVA_INT;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.v7878.foreign.Arena;
 import com.v7878.foreign.FunctionDescriptor;
@@ -57,7 +57,6 @@ public class InvalidUpCallTests {
 
     private static final SymbolLookup nativeLibLookup = SymbolLookup.loaderLookup();
 
-    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
     public void test_throwExceptionFromUpcallMethod() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
@@ -70,7 +69,7 @@ public class InvalidUpCallTests {
 
         try (Arena arena = Arena.ofConfined()) {
             MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct_throwException,
-                    FunctionDescriptor.of(structLayout, structLayout, structLayout), arena);
+                    FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, allowExceptions());
             MemorySegment structSegmt1 = arena.allocate(structLayout);
             intHandle1.set(structSegmt1, 0L, 11223344);
             intHandle2.set(structSegmt1, 0L, 55667788);
@@ -78,15 +77,15 @@ public class InvalidUpCallTests {
             intHandle1.set(structSegmt2, 0L, 99001122);
             intHandle2.set(structSegmt2, 0L, 33445566);
 
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-                MemorySegment resultSegmt = (MemorySegment) mh.invoke((SegmentAllocator) arena, structSegmt1, structSegmt2, upcallFuncAddr);
-                fail("Failed to throw IllegalArgumentException from the the upcall method");
-            });
+            IllegalArgumentException exception = assertThrows(
+                    "Failed to throw IllegalArgumentException from the the upcall method",
+                    IllegalArgumentException.class, () -> {
+                        MemorySegment resultSegmt = (MemorySegment) mh.invoke((SegmentAllocator) arena, structSegmt1, structSegmt2, upcallFuncAddr);
+                    });
             assertTrue(exception.getMessage().matches("An exception is thrown from the upcall method"));
         }
     }
 
-    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
     public void test_nestedUpcall_throwExceptionFromUpcallMethod() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
@@ -99,7 +98,7 @@ public class InvalidUpCallTests {
 
         try (Arena arena = Arena.ofConfined()) {
             MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct_nestedUpcall,
-                    FunctionDescriptor.of(structLayout, structLayout, structLayout), arena);
+                    FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, allowExceptions());
             MemorySegment structSegmt1 = arena.allocate(structLayout);
             intHandle1.set(structSegmt1, 0L, 11223344);
             intHandle2.set(structSegmt1, 0L, 55667788);
@@ -107,15 +106,15 @@ public class InvalidUpCallTests {
             intHandle1.set(structSegmt2, 0L, 99001122);
             intHandle2.set(structSegmt2, 0L, 33445566);
 
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-                MemorySegment resultSegmt = (MemorySegment) mh.invoke((SegmentAllocator) arena, structSegmt1, structSegmt2, upcallFuncAddr);
-                fail("Failed to throw IllegalArgumentException from the nested upcall");
-            });
+            IllegalArgumentException exception = assertThrows(
+                    "Failed to throw IllegalArgumentException from the nested upcall",
+                    IllegalArgumentException.class, () -> {
+                        MemorySegment resultSegmt = (MemorySegment) mh.invoke((SegmentAllocator) arena, structSegmt1, structSegmt2, upcallFuncAddr);
+                    });
             assertTrue(exception.getMessage().matches("An exception is thrown from the upcall method"));
         }
     }
 
-    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
     public void test_nullValueForReturnPtr() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
@@ -128,7 +127,7 @@ public class InvalidUpCallTests {
 
         try (Arena arena = Arena.ofConfined()) {
             MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStructPointer_nullValue,
-                    FunctionDescriptor.of(ADDRESS, ADDRESS, structLayout), arena);
+                    FunctionDescriptor.of(ADDRESS, ADDRESS, structLayout), arena, allowExceptions());
             MemorySegment structSegmt1 = arena.allocate(structLayout);
             intHandle1.set(structSegmt1, 0L, 11223344);
             intHandle2.set(structSegmt1, 0L, 55667788);
@@ -136,14 +135,14 @@ public class InvalidUpCallTests {
             intHandle1.set(structSegmt2, 0L, 99001122);
             intHandle2.set(structSegmt2, 0L, 33445566);
 
-            assertThrows(NullPointerException.class, () -> {
-                MemorySegment resultAddr = (MemorySegment) mh.invoke(structSegmt1, structSegmt2, upcallFuncAddr);
-                fail("Failed to throw NullPointerException in the case of the null value upon return");
-            });
+            assertThrows(
+                    "Failed to throw NullPointerException in the case of the null value upon return",
+                    NullPointerException.class, () -> {
+                        MemorySegment resultAddr = (MemorySegment) mh.invoke(structSegmt1, structSegmt2, upcallFuncAddr);
+                    });
         }
     }
 
-    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
     public void test_nullValueForReturnStruct() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
@@ -156,7 +155,7 @@ public class InvalidUpCallTests {
 
         try (Arena arena = Arena.ofConfined()) {
             MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct_nullValue,
-                    FunctionDescriptor.of(structLayout, structLayout, structLayout), arena);
+                    FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, allowExceptions());
             MemorySegment structSegmt1 = arena.allocate(structLayout);
             intHandle1.set(structSegmt1, 0L, 11223344);
             intHandle2.set(structSegmt1, 0L, 55667788);
@@ -164,10 +163,11 @@ public class InvalidUpCallTests {
             intHandle1.set(structSegmt2, 0L, 99001122);
             intHandle2.set(structSegmt2, 0L, 33445566);
 
-            assertThrows(NullPointerException.class, () -> {
-                MemorySegment resultSegmt = (MemorySegment) mh.invoke((SegmentAllocator) arena, structSegmt1, structSegmt2, upcallFuncAddr);
-                fail("Failed to throw NullPointerException in the case of the null value upon return");
-            });
+            assertThrows(
+                    "Failed to throw NullPointerException in the case of the null value upon return",
+                    NullPointerException.class, () -> {
+                        MemorySegment resultSegmt = (MemorySegment) mh.invoke((SegmentAllocator) arena, structSegmt1, structSegmt2, upcallFuncAddr);
+                    });
         }
     }
 
@@ -198,7 +198,8 @@ public class InvalidUpCallTests {
         }
     }
 
-    @Ignore("OpenJ9 misread the documentation, test is incorrect")
+    //TODO
+    @Ignore("The documentation doesn't say what exception type should be here")
     @Test
     public void test_nullSegmentForReturnStruct() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
@@ -211,7 +212,7 @@ public class InvalidUpCallTests {
 
         try (Arena arena = Arena.ofConfined()) {
             MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct_nullSegmt,
-                    FunctionDescriptor.of(structLayout, structLayout, structLayout), arena);
+                    FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, allowExceptions());
             MemorySegment structSegmt1 = arena.allocate(structLayout);
             intHandle1.set(structSegmt1, 0L, 11223344);
             intHandle2.set(structSegmt1, 0L, 55667788);
@@ -219,14 +220,14 @@ public class InvalidUpCallTests {
             intHandle1.set(structSegmt2, 0L, 99001122);
             intHandle2.set(structSegmt2, 0L, 33445566);
 
-            assertThrows(NullPointerException.class, () -> {
-                MemorySegment resultSegmt = (MemorySegment) mh.invoke((SegmentAllocator) arena, structSegmt1, structSegmt2, upcallFuncAddr);
-                fail("Failed to throw NullPointerException in the case of the null segment upon return");
-            });
+            assertThrows(
+                    "Failed to throw NullPointerException in the case of the null segment upon return",
+                    NullPointerException.class, () -> {
+                        MemorySegment resultSegmt = (MemorySegment) mh.invoke((SegmentAllocator) arena, structSegmt1, structSegmt2, upcallFuncAddr);
+                    });
         }
     }
 
-    @Ignore("OpenJ9 misread the documentation, test is incorrect")
     @Test
     public void test_heapSegmentForReturnPtr() throws Throwable {
         GroupLayout structLayout = MemoryLayout.structLayout(JAVA_INT.withName("elem1"), JAVA_INT.withName("elem2"));
@@ -239,7 +240,7 @@ public class InvalidUpCallTests {
 
         try (Arena arena = Arena.ofConfined()) {
             MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStructPointer_heapSegmt,
-                    FunctionDescriptor.of(ADDRESS, ADDRESS, structLayout), arena);
+                    FunctionDescriptor.of(ADDRESS, ADDRESS, structLayout), arena, allowExceptions());
             MemorySegment structSegmt1 = arena.allocate(structLayout);
             intHandle1.set(structSegmt1, 0L, 11223344);
             intHandle2.set(structSegmt1, 0L, 55667788);
@@ -247,10 +248,11 @@ public class InvalidUpCallTests {
             intHandle1.set(structSegmt2, 0L, 99001122);
             intHandle2.set(structSegmt2, 0L, 33445566);
 
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-                MemorySegment resultAddr = (MemorySegment) mh.invoke(structSegmt1, structSegmt2, upcallFuncAddr);
-                fail("Failed to throw IllegalArgumentException in the case of the heap segment upon return");
-            });
+            IllegalArgumentException exception = assertThrows(
+                    "Failed to throw IllegalArgumentException in the case of the heap segment upon return",
+                    IllegalArgumentException.class, () -> {
+                        MemorySegment resultAddr = (MemorySegment) mh.invoke(structSegmt1, structSegmt2, upcallFuncAddr);
+                    });
             assertTrue(exception.getMessage().matches("Heap segment not allowed.*"));
         }
     }
@@ -290,11 +292,12 @@ public class InvalidUpCallTests {
         MethodHandle mh = linker.downcallHandle(functionSymbol, fd);
 
         try (Arena arena = Arena.ofConfined()) {
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-                MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct,
-                        FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, Linker.Option.firstVariadicArg(0));
-                fail("Failed to throw IllegalArgumentException in the case of the invalid linker option for upcall.");
-            });
+            IllegalArgumentException exception = assertThrows(
+                    "Failed to throw IllegalArgumentException in the case of the invalid linker option for upcall.",
+                    IllegalArgumentException.class, () -> {
+                        MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct,
+                                FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, Linker.Option.firstVariadicArg(0));
+                    });
             assertTrue(exception.getMessage().matches("Not supported for upcall.*"));
         }
     }
@@ -308,11 +311,12 @@ public class InvalidUpCallTests {
         MethodHandle mh = linker.downcallHandle(functionSymbol, fd);
 
         try (Arena arena = Arena.ofConfined()) {
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-                MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct,
-                        FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, Linker.Option.captureCallState("errno"));
-                fail("Failed to throw IllegalArgumentException in the case of the invalid linker option for upcall.");
-            });
+            IllegalArgumentException exception = assertThrows(
+                    "Failed to throw IllegalArgumentException in the case of the invalid linker option for upcall.",
+                    IllegalArgumentException.class, () -> {
+                        MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct,
+                                FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, Linker.Option.captureCallState("errno"));
+                    });
             assertTrue(exception.getMessage().matches("Not supported for upcall.*"));
         }
     }
@@ -326,16 +330,18 @@ public class InvalidUpCallTests {
         MethodHandle mh = linker.downcallHandle(functionSymbol, fd);
 
         try (Arena arena = Arena.ofConfined()) {
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-                MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct,
-                        FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, Linker.Option.critical(false));
-                fail("Failed to throw IllegalArgumentException in the case of the invalid linker option for upcall.");
-            });
+            IllegalArgumentException exception = assertThrows(
+                    "Failed to throw IllegalArgumentException in the case of the invalid linker option for upcall.",
+                    IllegalArgumentException.class, () -> {
+                        MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct,
+                                FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, Linker.Option.critical(false));
+                    });
             assertTrue(exception.getMessage().matches("Not supported for upcall.*"));
         }
     }
 
-    @Ignore("OpenJ9 misread the documentation, test is incorrect")
+    //TODO
+    @Ignore("Do we really need to check the state of the thread?")
     @Test
     public void test_InvalidLinkerOptions_isCritical_2() throws Throwable {
         FunctionDescriptor fd = FunctionDescriptor.of(JAVA_INT, JAVA_INT, ADDRESS);
@@ -343,12 +349,13 @@ public class InvalidUpCallTests {
         MethodHandle mh = linker.downcallHandle(functionSymbol, fd, Linker.Option.critical(false));
 
         try (Arena arena = Arena.ofConfined()) {
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-                MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_captureCriticalOption,
-                        FunctionDescriptor.of(JAVA_INT, JAVA_INT), arena);
-                int result = (int) mh.invoke(111, upcallFuncAddr);
-                fail("Failed to throw IllegalThreadStateException in the case of the invalid upcall during the critical downcall.");
-            });
+            IllegalArgumentException exception = assertThrows(
+                    "Failed to throw IllegalThreadStateException in the case of the invalid upcall during the critical downcall.",
+                    IllegalArgumentException.class, () -> {
+                        MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_captureCriticalOption,
+                                FunctionDescriptor.of(JAVA_INT, JAVA_INT), arena, allowExceptions());
+                        int result = (int) mh.invoke(111, upcallFuncAddr);
+                    });
             assertTrue(exception.getMessage().matches(".* wrong thread state for upcall"));
         }
     }

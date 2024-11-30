@@ -21,6 +21,7 @@
  */
 package com.v7878.panamatest.openj9.upcall;
 
+import static com.v7878.foreign.Linker.Option.allowExceptions;
 import static com.v7878.foreign.ValueLayout.ADDRESS;
 import static com.v7878.foreign.ValueLayout.JAVA_BOOLEAN;
 import static com.v7878.foreign.ValueLayout.JAVA_BYTE;
@@ -1765,7 +1766,7 @@ public class UpcallMethodHandles {
         MemorySegment functionSymbol = nativeLibLookup.find("add2IntStructs_returnStructByUpcallMH").get();
         MethodHandle mh = linker.downcallHandle(functionSymbol, fd);
         MemorySegment upcallFuncAddr = linker.upcallStub(UpcallMethodHandles.MH_add2IntStructs_returnStruct_throwException,
-                FunctionDescriptor.of(structLayout, structLayout, structLayout), arena);
+                FunctionDescriptor.of(structLayout, structLayout, structLayout), arena, allowExceptions());
         MemorySegment resultSegmt = null;
         try {
             resultSegmt = (MemorySegment) mh.invoke((SegmentAllocator) arena, arg1, arg2, upcallFuncAddr);
