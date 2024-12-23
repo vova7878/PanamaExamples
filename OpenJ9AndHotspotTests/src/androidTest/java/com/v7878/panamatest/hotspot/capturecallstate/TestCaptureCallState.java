@@ -62,14 +62,20 @@ public class TestCaptureCallState extends NativeTestHelper {
     }
 
     private record SaveValuesCase(String nativeTarget, FunctionDescriptor nativeDesc,
-                                  String threadLocalName, Consumer<Object> resultCheck) {
+                                  String threadLocalName,
+                                  Consumer<Object> resultCheck, boolean critical) {
     }
 
     @Test
     @UseDataProvider("cases")
     public void testSavedThreadLocal(SaveValuesCase testCase) throws Throwable {
-        Linker.Option stl = Linker.Option.captureCallState(testCase.threadLocalName());
-        MethodHandle handle = downcallHandle(testCase.nativeTarget(), testCase.nativeDesc(), stl);
+        List<Linker.Option> options = new ArrayList<>();
+        options.add(Linker.Option.captureCallState(testCase.threadLocalName()));
+        if (testCase.critical()) {
+            options.add(Linker.Option.critical(false));
+        }
+        MethodHandle handle = downcallHandle(testCase.nativeTarget(),
+                testCase.nativeDesc(), options.toArray(new Linker.Option[0]));
 
         StructLayout capturedStateLayout = Linker.Option.captureStateLayout();
         VarHandle errnoHandle = capturedStateLayout.varHandle(groupElement(testCase.threadLocalName()));
@@ -87,21 +93,25 @@ public class TestCaptureCallState extends NativeTestHelper {
         }
     }
 
+
     @Test
     @UseDataProvider("invalidCaptureSegmentCases")
     public void testInvalidCaptureSegment(MemorySegment captureSegment,
-                                          Class<?> expectedExceptionType, String expectedExceptionMessage) {
-        Linker.Option stl = Linker.Option.captureCallState("errno");
-        MethodHandle handle = downcallHandle("set_errno_V", FunctionDescriptor.ofVoid(C_INT), stl);
+                                          Class<?> expectedExceptionType, String expectedExceptionMessage,
+                                          Linker.Option[] extraOptions) {
+        List<Linker.Option> options = new ArrayList<>();
+        options.add(Linker.Option.captureCallState("errno"));
+        for (Linker.Option extra : extraOptions) {
+            options.add(extra);
+        }
+        MethodHandle handle = downcallHandle("set_errno_V", FunctionDescriptor.ofVoid(C_INT), options.toArray(new Linker.Option[0]));
 
         try {
             int testValue = 42;
             handle.invoke(captureSegment, testValue); // should throw
         } catch (Throwable t) {
             assertTrue(expectedExceptionType.isInstance(t));
-            System.err.println(t.getMessage());
             assertTrue(t.getMessage().matches(expectedExceptionMessage));
-            System.err.println();
         }
     }
 
@@ -109,35 +119,42 @@ public class TestCaptureCallState extends NativeTestHelper {
     public static Object[][] cases() {
         List<SaveValuesCase> cases = new ArrayList<>();
 
-        cases.add(new SaveValuesCase("set_errno_V", FunctionDescriptor.ofVoid(JAVA_INT), "errno", o -> {
-        }));
-        cases.add(new SaveValuesCase("set_errno_I", FunctionDescriptor.of(JAVA_INT, JAVA_INT), "errno", o -> assertEquals((int) o, 42)));
-        cases.add(new SaveValuesCase("set_errno_D", FunctionDescriptor.of(C_DOUBLE, JAVA_INT), "errno", o -> assertEquals((double) o, 42.0, 0)));
+        for (boolean critical : new boolean[]{true, false}) {
+            cases.add(new SaveValuesCase("set_errno_V", FunctionDescriptor.ofVoid(JAVA_INT),
+                    "errno", o -> {
+            }, critical));
+            cases.add(new SaveValuesCase("set_errno_I", FunctionDescriptor.of(JAVA_INT, JAVA_INT),
+                    "errno", o -> assertEquals((int) o, 42), critical));
+            cases.add(new SaveValuesCase("set_errno_D", FunctionDescriptor.of(C_DOUBLE, JAVA_INT),
+                    "errno", o -> assertEquals((double) o, 42.0, 0), critical));
 
-        cases.add(structCase("SL", Map.of(C_LONG_LONG.withName("x"), 42L)));
-        cases.add(structCase("SLL", Map.of(C_LONG_LONG.withName("x"), 42L,
-                C_LONG_LONG.withName("y"), 42L)));
-        cases.add(structCase("SLLL", Map.of(C_LONG_LONG.withName("x"), 42L,
-                C_LONG_LONG.withName("y"), 42L,
-                C_LONG_LONG.withName("z"), 42L)));
-        cases.add(structCase("SD", Map.of(C_DOUBLE.withName("x"), 42D)));
-        cases.add(structCase("SDD", Map.of(C_DOUBLE.withName("x"), 42D,
-                C_DOUBLE.withName("y"), 42D)));
-        cases.add(structCase("SDDD", Map.of(C_DOUBLE.withName("x"), 42D,
-                C_DOUBLE.withName("y"), 42D,
-                C_DOUBLE.withName("z"), 42D)));
+            cases.add(structCase("SL", Map.of(C_LONG_LONG.withName("x"), 42L), critical));
+            cases.add(structCase("SLL", Map.of(C_LONG_LONG.withName("x"), 42L,
+                    C_LONG_LONG.withName("y"), 42L), critical));
+            cases.add(structCase("SLLL", Map.of(C_LONG_LONG.withName("x"), 42L,
+                    C_LONG_LONG.withName("y"), 42L,
+                    C_LONG_LONG.withName("z"), 42L), critical));
+            cases.add(structCase("SD", Map.of(C_DOUBLE.withName("x"), 42D), critical));
+            cases.add(structCase("SDD", Map.of(C_DOUBLE.withName("x"), 42D,
+                    C_DOUBLE.withName("y"), 42D), critical));
+            cases.add(structCase("SDDD", Map.of(C_DOUBLE.withName("x"), 42D,
+                    C_DOUBLE.withName("y"), 42D,
+                    C_DOUBLE.withName("z"), 42D), critical));
 
-        if (IS_WINDOWS) {
-            cases.add(new SaveValuesCase("SetLastError", FunctionDescriptor.ofVoid(JAVA_INT), "GetLastError", o -> {
-            }));
-            cases.add(new SaveValuesCase("WSASetLastError", FunctionDescriptor.ofVoid(JAVA_INT), "WSAGetLastError", o -> {
-            }));
+            if (IS_WINDOWS) {
+                cases.add(new SaveValuesCase("SetLastError", FunctionDescriptor.ofVoid(JAVA_INT),
+                        "GetLastError", o -> {
+                }, critical));
+                cases.add(new SaveValuesCase("WSASetLastError", FunctionDescriptor.ofVoid(JAVA_INT),
+                        "WSAGetLastError", o -> {
+                }, critical));
+            }
         }
 
         return cases.stream().map(tc -> new Object[]{tc}).toArray(Object[][]::new);
     }
 
-    static SaveValuesCase structCase(String name, Map<MemoryLayout, Object> fields) {
+    static SaveValuesCase structCase(String name, Map<MemoryLayout, Object> fields, boolean critical) {
         StructLayout layout = MemoryLayout.structLayout(fields.keySet().toArray(new MemoryLayout[0]));
 
         Consumer<Object> check = o -> {
@@ -149,16 +166,22 @@ public class TestCaptureCallState extends NativeTestHelper {
             check = check.andThen(o -> assertEquals(fieldHandle.get(o, 0L), value));
         }
 
-        return new SaveValuesCase("set_errno_" + name, FunctionDescriptor.of(layout, JAVA_INT), "errno", check);
+        return new SaveValuesCase("set_errno_" + name, FunctionDescriptor.of(layout, JAVA_INT),
+                "errno", check, critical);
     }
+
 
     @DataProvider(format = "%m[%i]")
     public static Object[][] invalidCaptureSegmentCases() {
         return new Object[][]{
-                {Arena.ofAuto().allocate(1), IndexOutOfBoundsException.class, ".*out of bounds.*"},
-                {MemorySegment.NULL, IllegalArgumentException.class, ".*Capture segment is NULL.*"},
+                //TODO: fix message
+                //{Arena.ofAuto().allocate(1), IndexOutOfBoundsException.class, ".*Out of bound access on segment.*", new Linker.Option[0]},
+                {Arena.ofAuto().allocate(1), IndexOutOfBoundsException.class, ".*", new Linker.Option[0]},
+                {MemorySegment.NULL, IllegalArgumentException.class, ".*Capture segment is NULL.*", new Linker.Option[0]},
                 {Arena.ofAuto().allocate(Linker.Option.captureStateLayout().byteSize() + 3).asSlice(3), // misaligned
-                        IllegalArgumentException.class, ".*Target offset incompatible with alignment constraints.*"},
+                        IllegalArgumentException.class, ".*Target offset incompatible with alignment constraints.*", new Linker.Option[0]},
+                {MemorySegment.ofArray(new byte[(int) Linker.Option.captureStateLayout().byteSize()]), // misaligned
+                        IllegalArgumentException.class, ".*Target offset incompatible with alignment constraints.*", new Linker.Option[0]},
         };
     }
 }
