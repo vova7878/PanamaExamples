@@ -243,8 +243,10 @@ public class TestSegments {
         assertTrue(s.contains("byteSize: "));
         if (segment.heapBase().isPresent()) {
             assertTrue(s.contains("heapBase: ["));
+            assertFalse(s.contains("native"));
         } else {
             assertFalse(s.contains("heapBase: "));
+            assertTrue(s.contains("native"));
         }
         assertFalse(s.contains("Optional"));
     }
