@@ -9,7 +9,6 @@ import com.v7878.foreign.Linker;
 import com.v7878.foreign.MemorySegment;
 import com.v7878.foreign.SymbolLookup;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.invoke.MethodHandle;
@@ -29,8 +28,6 @@ public class TestNULLAddress {
                 FunctionDescriptor.ofVoid());
     }
 
-    //TODO: fix
-    @Ignore("Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0")
     @Test(expected = IllegalArgumentException.class)
     public void testNULLVirtual() throws Throwable {
         MethodHandle mh = LINKER.downcallHandle(FunctionDescriptor.ofVoid());
