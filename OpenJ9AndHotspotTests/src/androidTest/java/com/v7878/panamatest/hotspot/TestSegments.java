@@ -215,7 +215,7 @@ public class TestSegments {
         assertFalse(segment.isReadOnly());
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] scopes() {
         return new Object[][]{
                 {Arena.ofAuto(), false},
@@ -251,7 +251,7 @@ public class TestSegments {
         assertFalse(s.contains("Optional"));
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] segmentFactories() {
         List<Supplier<MemorySegment>> l = List.of(
                 () -> MemorySegment.ofArray(new byte[]{0x00, 0x01, 0x02, 0x03}),
@@ -493,7 +493,7 @@ public class TestSegments {
         assertEquals(thrown.getSuppressed().length, 0);
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] badSizeAndAlignments() {
         return new Object[][]{
                 {-1, 8},
@@ -502,7 +502,7 @@ public class TestSegments {
         };
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] heapFactories() {
         return new Object[][]{
                 {(IntFunction<MemorySegment>) size -> MemorySegment.ofArray(new byte[size]), 1},

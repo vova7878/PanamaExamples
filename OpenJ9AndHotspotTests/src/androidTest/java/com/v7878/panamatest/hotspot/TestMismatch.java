@@ -411,9 +411,7 @@ public class TestMismatch {
         }
     }
 
-    ;
-
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] slicesStatic() {
         int[] sizes = {16, 8, 1};
         List<SliceOffsetAndSize> aSliceOffsetAndSizes = new ArrayList<>();
@@ -439,7 +437,7 @@ public class TestMismatch {
         return sliceArray;
     }
 
-    @DataProvider
+    @DataProvider(format = "%m[%i]")
     public static Object[][] slices() {
         Object[][] slicesStatic = slicesStatic();
         return Stream.of(slicesStatic)
