@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'com.v7878.panamatest'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.v7878.panamatest"
         minSdk 26
-        targetSdk 35
+        targetSdk 36
         versionCode 1
         versionName "1.0"
 
@@ -42,7 +42,9 @@ android {
 }
 
 dependencies {
-    androidTestImplementation libs.junit4.dataprovider
-    androidTestImplementation libs.androidx.runner
+    androidTestImplementation(libs.junit4.dataprovider) {
+        exclude group: 'com.tngtech.junit.dataprovider', module: 'junit-dataprovider-core'
+    }
+    androidTestImplementation(libs.androidx.runner)
     implementation libs.androidpanama
 }
