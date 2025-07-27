@@ -26,6 +26,7 @@ package com.v7878.panamatest.hotspot.capturecallstate;
 import static com.v7878.foreign.MemoryLayout.PathElement.groupElement;
 import static com.v7878.foreign.ValueLayout.JAVA_INT;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import com.tngtech.java.junit.dataprovider.DataProvider;
@@ -59,6 +60,17 @@ public class TestCaptureCallState extends NativeTestHelper {
             System.load(system32 + "\\Kernel32.dll");
             System.load(system32 + "\\Ws2_32.dll");
         }
+    }
+
+    // Basic sanity tests around Java API contracts
+    @Test
+    public void testApiContracts() {
+        assertThrows(IllegalArgumentException.class, () -> Linker.Option.captureCallState("Does not exist"));
+        var duplicateOpt = Linker.Option.captureCallState("errno", "errno"); // duplicates
+        var noDuplicateOpt = Linker.Option.captureCallState("errno");
+        assertEquals("auto deduplication", duplicateOpt, noDuplicateOpt);
+        var display = duplicateOpt.toString();
+        assertTrue("toString should contain state name 'errno': " + display, display.contains("errno"));
     }
 
     private record SaveValuesCase(String nativeTarget, FunctionDescriptor nativeDesc,

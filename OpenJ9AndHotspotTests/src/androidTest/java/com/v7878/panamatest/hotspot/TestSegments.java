@@ -32,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -69,6 +70,12 @@ public class TestSegments {
         try (Arena arena = Arena.ofConfined()) {
             var segment = arena.allocate(0, 1);
             assertEquals(segment.byteSize(), 0);
+            if (segment.address() == 0) {
+                fail("Segment address is zero");
+            }
+            if (segment.address() == arena.allocate(0, 1).address()) {
+                fail("Segment address was not distinct");
+            }
             MemoryLayout seq = MemoryLayout.sequenceLayout(0, JAVA_INT);
             segment = arena.allocate(seq);
             assertEquals(segment.byteSize(), 0);
@@ -79,6 +86,19 @@ public class TestSegments {
             MemorySegment rawAddress = MemorySegment.ofAddress(segment.address());
             assertEquals(rawAddress.byteSize(), 0);
             assertEquals(rawAddress.address() % 4, 0);
+        }
+    }
+
+    @Test
+    public void testZeroLengthNativeSegmentHyperAligned() {
+        long byteAlignment = 1024;
+        try (Arena arena = Arena.ofConfined()) {
+            var segment = arena.allocate(0, byteAlignment);
+            assertEquals(segment.byteSize(), 0);
+            if (segment.address() == 0) {
+                fail("Segment address is zero");
+            }
+            assertTrue(segment.maxByteAlignment() >= byteAlignment);
         }
     }
 

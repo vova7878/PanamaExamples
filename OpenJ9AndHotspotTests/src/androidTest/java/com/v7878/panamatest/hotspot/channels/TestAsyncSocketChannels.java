@@ -65,13 +65,14 @@ public class TestAsyncSocketChannels extends AbstractChannelsTest {
 
     static final Class<IOException> IOE = IOException.class;
     static final Class<ExecutionException> EE = ExecutionException.class;
+    static final Class<IllegalArgumentException> IAE = IllegalArgumentException.class;
     static final Class<IllegalStateException> ISE = IllegalStateException.class;
 
     /**
      * Tests that confined sessions are not supported.
      */
-    //TODO: Expected type:class java.lang.IllegalStateException, got:null
-    @Ignore
+    //TODO
+    @Ignore("expected java.lang.IllegalArgumentException to be thrown, but nothing was thrown")
     @Test
     @UseDataProvider("confinedArenas")
     public void testWithConfined(Supplier<Arena> arenaSupplier)
@@ -85,8 +86,8 @@ public class TestAsyncSocketChannels extends AbstractChannelsTest {
             var bb = segment.asByteBuffer();
             var bba = new ByteBuffer[]{bb};
             List<ThrowingConsumer<TestHandler, ?>> ioOps = List.of(
-                    handler -> handler.propagateHandlerFromFuture(channel.write(bb)),
-                    handler -> handler.propagateHandlerFromFuture(channel.read(bb)),
+                    handler -> channel.write(bb),
+                    handler -> channel.read(bb),
                     handler -> channel.write(bb, null, handler),
                     handler -> channel.read(bb, null, handler),
                     handler -> channel.write(bb, 0L, SECONDS, null, handler),
@@ -98,9 +99,7 @@ public class TestAsyncSocketChannels extends AbstractChannelsTest {
                 out.println("testAsyncWithConfined - op");
                 var handler = new TestHandler();
                 ioOp.accept(handler);
-                handler.await()
-                        .assertFailedWith(ISE)
-                        .assertExceptionMessage("Confined session not supported");
+                assertThrows(IAE, () -> ioOp.accept(handler));
             }
         }
     }
