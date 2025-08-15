@@ -27,6 +27,7 @@ import com.v7878.foreign.FunctionDescriptor;
 import com.v7878.foreign.MemoryLayout;
 import com.v7878.foreign.MemorySegment;
 import com.v7878.foreign.SegmentAllocator;
+import com.v7878.invoke.Handles;
 
 import java.lang.invoke.MethodHandle;
 import java.util.List;
@@ -37,7 +38,7 @@ public class TestDowncallBase extends CallGeneratorHelper {
 
     Object doCall(MemorySegment symbol, SegmentAllocator allocator, FunctionDescriptor descriptor, Object[] args) throws Throwable {
         MethodHandle mh = downcallHandle(LINKER, symbol, allocator, descriptor);
-        return mh.invokeWithArguments(args);
+        return Handles.invokeWithArguments(mh, args);
     }
 
     static FunctionDescriptor function(Ret ret, List<ParamType> params, List<StructFieldType> fields, List<MemoryLayout> prefix) {

@@ -32,6 +32,7 @@ import com.v7878.foreign.FunctionDescriptor;
 import com.v7878.foreign.Linker;
 import com.v7878.foreign.MemoryLayout;
 import com.v7878.foreign.MemorySegment;
+import com.v7878.invoke.Handles;
 
 import org.junit.Test;
 
@@ -93,7 +94,7 @@ public class SafeFunctionAccessTest extends NativeTestHelper {
                 }
             }
             try {
-                handle.invokeWithArguments(Stream.of(allocations).map(Allocation::segment).toArray());
+                Handles.invokeWithArguments(handle, Stream.of(allocations).map(Allocation::segment).toArray());
                 fail();
             } catch (IllegalStateException ex) {
                 assertTrue(ex.getMessage().contains("Already closed"));

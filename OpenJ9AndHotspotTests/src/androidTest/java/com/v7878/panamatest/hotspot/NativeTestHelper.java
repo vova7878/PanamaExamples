@@ -40,6 +40,7 @@ import com.v7878.foreign.StructLayout;
 import com.v7878.foreign.SymbolLookup;
 import com.v7878.foreign.UnionLayout;
 import com.v7878.foreign.ValueLayout;
+import com.v7878.invoke.Handles;
 import com.v7878.invoke.VarHandle;
 
 import java.lang.invoke.MethodHandle;
@@ -313,9 +314,9 @@ public class NativeTestHelper {
      */
     public static MemorySegment makeArgSaverCB(FunctionDescriptor fd, Arena arena,
                                                AtomicReference<Object[]> capturedArgs, int retIdx) {
-        MethodHandle target = MethodHandles.insertArguments(MH_SAVER, 1, fd.argumentLayouts(), capturedArgs, arena, retIdx);
-        target = target.asCollector(Object[].class, fd.argumentLayouts().size());
-        target = target.asType(fd.toMethodType());
+        MethodHandle target = Handles.insertArguments(MH_SAVER, 1, fd.argumentLayouts(), capturedArgs, arena, retIdx);
+        target = Handles.asCollector(target, Object[].class, fd.argumentLayouts().size());
+        target = Handles.asType(target, fd.toMethodType());
         return LINKER.upcallStub(target, fd, arena);
     }
 

@@ -31,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 import com.v7878.foreign.Arena;
 import com.v7878.foreign.FunctionDescriptor;
 import com.v7878.foreign.MemorySegment;
+import com.v7878.invoke.Handles;
 
 import org.junit.Test;
 
@@ -69,13 +70,13 @@ public class TestUpcallStructScope extends NativeTestHelper {
     }
 
     private static MethodHandle methodHandle(Consumer<MemorySegment> callback) {
-        return MH_Consumer_accept.bindTo(callback)
-                .asType(MethodType.methodType(void.class, MemorySegment.class));
+        return Handles.asType(MH_Consumer_accept.bindTo(callback),
+                MethodType.methodType(void.class, MemorySegment.class));
     }
 
     private static MethodHandle methodHandle(BiConsumer<MemorySegment, MemorySegment> callback) {
-        return MH_BiConsumer_accept.bindTo(callback)
-                .asType(MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class));
+        return Handles.asType(MH_BiConsumer_accept.bindTo(callback),
+                MethodType.methodType(void.class, MemorySegment.class, MemorySegment.class));
     }
 
     @Test

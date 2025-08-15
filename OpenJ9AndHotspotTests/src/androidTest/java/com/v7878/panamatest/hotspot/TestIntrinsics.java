@@ -34,6 +34,7 @@ import com.v7878.foreign.FunctionDescriptor;
 import com.v7878.foreign.Linker;
 import com.v7878.foreign.MemoryLayout;
 import com.v7878.foreign.MemorySegment;
+import com.v7878.invoke.Handles;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,7 +73,7 @@ public class TestIntrinsics extends NativeTestHelper {
         }
 
         AddTest tests = (mh, expectedResult, args) -> testsList.add(() -> {
-            Object actual = mh.invokeWithArguments(args);
+            Object actual = Handles.invokeWithArguments(mh, args);
             assertEquals(actual, expectedResult);
         });
 

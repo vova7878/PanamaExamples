@@ -37,6 +37,7 @@ import com.v7878.foreign.Linker;
 import com.v7878.foreign.MemoryLayout;
 import com.v7878.foreign.MemorySegment;
 import com.v7878.foreign.ValueLayout;
+import com.v7878.invoke.Handles;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +56,7 @@ public class TestIllegalLink extends NativeTestHelper {
     private static final boolean IS_LE = ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN;
 
     private static final MemorySegment DUMMY_TARGET = MemorySegment.ofAddress(1);
-    private static final MethodHandle DUMMY_TARGET_MH = NewApiUtils.empty(MethodType.methodType(void.class));
+    private static final MethodHandle DUMMY_TARGET_MH = Handles.empty(MethodType.methodType(void.class));
     private static final Linker ABI = Linker.nativeLinker();
 
     @Test

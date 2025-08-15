@@ -50,6 +50,7 @@ import com.v7878.foreign.MemoryLayout.PathElement;
 import com.v7878.foreign.MemorySegment;
 import com.v7878.foreign.SequenceLayout;
 import com.v7878.foreign.ValueLayout;
+import com.v7878.invoke.Handles;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -437,8 +438,8 @@ public class TestByteBuffer {
             MemorySegment segment = arena.allocate(bytes, Long.BYTES);
             bb = segment.asByteBuffer();
             for (Map.Entry<MethodHandle, Object[]> e : varHandleMembers(bb, bufferHandle).entrySet()) {
-                MethodHandle handle = e.getKey().bindTo(bufferHandle)
-                        .asSpreader(Object[].class, e.getValue().length);
+                MethodHandle handle = Handles.asSpreader(e.getKey().bindTo(bufferHandle),
+                        Object[].class, e.getValue().length);
                 try {
                     handle.invoke(e.getValue());
                 } catch (UnsupportedOperationException ex) {
@@ -451,8 +452,8 @@ public class TestByteBuffer {
         }
         for (Map.Entry<MethodHandle, Object[]> e : varHandleMembers(bb, bufferHandle).entrySet()) {
             try {
-                MethodHandle handle = e.getKey().bindTo(bufferHandle)
-                        .asSpreader(Object[].class, e.getValue().length);
+                MethodHandle handle = Handles.asSpreader(e.getKey().bindTo(bufferHandle),
+                        Object[].class, e.getValue().length);
                 handle.invoke(e.getValue());
                 fail();
             } catch (IllegalStateException ex) {
@@ -686,6 +687,7 @@ public class TestByteBuffer {
     }
 
     @Test
+    // TODO: Why does it fail on API 35+?
     public void testOfBufferScopeReachable() throws InterruptedException {
         ByteBuffer buffer = ByteBuffer.allocateDirect(1000);
         MemorySegment segment = MemorySegment.ofBuffer(buffer);

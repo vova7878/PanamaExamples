@@ -37,6 +37,7 @@ import com.v7878.foreign.Linker;
 import com.v7878.foreign.MemoryLayout;
 import com.v7878.foreign.MemorySegment;
 import com.v7878.foreign.ValueLayout;
+import com.v7878.invoke.Handles;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -352,7 +353,7 @@ public class StdLibTest extends NativeTestHelper {
             MethodHandle mh = abi.downcallHandle(printfAddr,
                     fd.appendArgumentLayouts(variadicLayouts.toArray(new MemoryLayout[args.size()])),
                     varargIndex);
-            return mh.asSpreader(1, Object[].class, args.size());
+            return Handles.asSpreader(mh, 1, Object[].class, args.size());
         }
     }
 

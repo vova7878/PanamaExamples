@@ -36,7 +36,6 @@ import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import com.v7878.foreign.Arena;
 import com.v7878.foreign.MemorySegment;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -71,8 +70,6 @@ public class TestAsyncSocketChannels extends AbstractChannelsTest {
     /**
      * Tests that confined sessions are not supported.
      */
-    //TODO
-    @Ignore("expected java.lang.IllegalArgumentException to be thrown, but nothing was thrown")
     @Test
     @UseDataProvider("confinedArenas")
     public void testWithConfined(Supplier<Arena> arenaSupplier)
@@ -98,7 +95,6 @@ public class TestAsyncSocketChannels extends AbstractChannelsTest {
             for (var ioOp : ioOps) {
                 out.println("testAsyncWithConfined - op");
                 var handler = new TestHandler();
-                ioOp.accept(handler);
                 assertThrows(IAE, () -> ioOp.accept(handler));
             }
         }

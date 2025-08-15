@@ -1,11 +1,11 @@
 [versions]
 agp = "8.11.1"
-androidpanama = "4dcd2699a9"
+androidpanama = "7acf1fb21d"
 appcompat = "1.7.1"
 junit4Dataprovider = "2.10"
 material = "1.12.0"
 constraintlayout = "2.2.1"
-runner = "1.6.2"
+runner = "1.7.0"
 
 [libraries]
 androidpanama = { module = "com.github.vova7878.PanamaPort:AndroidPanama", version.ref = "androidpanama" }

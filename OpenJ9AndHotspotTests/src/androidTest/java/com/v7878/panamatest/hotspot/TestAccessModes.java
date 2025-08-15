@@ -36,6 +36,7 @@ import com.v7878.foreign.GroupLayout;
 import com.v7878.foreign.MemoryLayout;
 import com.v7878.foreign.MemorySegment;
 import com.v7878.foreign.ValueLayout;
+import com.v7878.invoke.Handles;
 import com.v7878.invoke.VarHandle;
 import com.v7878.invoke.VarHandle.AccessMode;
 
@@ -64,7 +65,7 @@ public class TestAccessModes {
         MethodHandle methodHandle = varHandle.toMethodHandle(mode);
         boolean compatible = AccessModeKind.supportedModes(accessLayout(layout)).contains(AccessModeKind.of(mode));
         try {
-            Object o = methodHandle.invokeWithArguments(makeArgs(segment, varHandle.accessModeType(mode)));
+            Object o = Handles.invokeWithArguments(methodHandle, makeArgs(segment, varHandle.accessModeType(mode)));
             assertTrue(compatible);
         } catch (UnsupportedOperationException ex) {
             assertFalse(compatible);
@@ -98,7 +99,7 @@ public class TestAccessModes {
         if (clazz == MemorySegment.class) {
             return MemorySegment.NULL;
         } else if (clazz.isPrimitive()) {
-            return NewApiUtils.zero(clazz).invoke();
+            return Handles.zero(clazz).invoke();
         } else {
             throw new UnsupportedOperationException();
         }

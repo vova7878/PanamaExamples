@@ -30,6 +30,7 @@ import static org.junit.Assert.assertTrue;
 import com.v7878.foreign.Arena;
 import com.v7878.foreign.MemorySegment;
 import com.v7878.foreign.ValueLayout;
+import com.v7878.invoke.Handles;
 import com.v7878.invoke.VarHandle;
 import com.v7878.invoke.VarHandles;
 
@@ -61,21 +62,21 @@ public class TestAdaptVarHandles {
             I2S = MethodHandles.lookup().findStatic(TestAdaptVarHandles.class, "intToString", MethodType.methodType(String.class, int.class));
             CTX_I2S = MethodHandles.lookup().findStatic(TestAdaptVarHandles.class, "ctxIntToString",
                     MethodType.methodType(String.class, String.class, String.class, int.class));
-            O2I = MethodHandles.explicitCastArguments(S2I, MethodType.methodType(int.class, Object.class));
-            I2O = MethodHandles.explicitCastArguments(I2S, MethodType.methodType(Object.class, int.class));
+            O2I = Handles.explicitCastArguments(S2I, MethodType.methodType(int.class, Object.class));
+            I2O = Handles.explicitCastArguments(I2S, MethodType.methodType(Object.class, int.class));
             S2L = MethodHandles.lookup().findStatic(TestAdaptVarHandles.class, "stringToLong", MethodType.methodType(long.class, String.class));
             S2L_EX = MethodHandles.lookup().findStatic(TestAdaptVarHandles.class, "stringToLongException", MethodType.methodType(long.class, String.class));
             BASE_ADDR = MethodHandles.lookup().findStatic(TestAdaptVarHandles.class, "baseAddress", MethodType.methodType(MemorySegment.class, MemorySegment.class));
             SUM_OFFSETS = MethodHandles.lookup().findStatic(TestAdaptVarHandles.class, "sumOffsets", MethodType.methodType(long.class, long.class, long.class));
             VOID_FILTER = MethodHandles.lookup().findStatic(TestAdaptVarHandles.class, "void_filter", MethodType.methodType(void.class, String.class));
 
-            MethodHandle s2i_ex = MethodHandles.throwException(int.class, Throwable.class);
-            s2i_ex = MethodHandles.insertArguments(s2i_ex, 0, new Throwable());
-            S2I_EX = MethodHandles.dropArguments(s2i_ex, 0, String.class);
+            MethodHandle s2i_ex = Handles.throwException(int.class, Throwable.class);
+            s2i_ex = Handles.insertArguments(s2i_ex, 0, new Throwable());
+            S2I_EX = Handles.dropArguments(s2i_ex, 0, String.class);
 
-            MethodHandle i2s_ex = MethodHandles.throwException(String.class, Throwable.class);
-            i2s_ex = MethodHandles.insertArguments(i2s_ex, 0, new Throwable());
-            I2S_EX = MethodHandles.dropArguments(i2s_ex, 0, int.class);
+            MethodHandle i2s_ex = Handles.throwException(String.class, Throwable.class);
+            i2s_ex = Handles.insertArguments(i2s_ex, 0, new Throwable());
+            I2S_EX = Handles.dropArguments(i2s_ex, 0, int.class);
         } catch (Throwable ex) {
             throw new ExceptionInInitializerError();
         }
@@ -114,7 +115,7 @@ public class TestAdaptVarHandles {
         Arena scope = Arena.ofAuto();
         MemorySegment segment = scope.allocate(layout);
         VarHandle intHandle = layout.varHandle();
-        MethodHandle CTX_S2I = MethodHandles.dropArguments(S2I, 0, String.class, String.class);
+        MethodHandle CTX_S2I = Handles.dropArguments(S2I, 0, String.class, String.class);
         VarHandle i2SHandle = VarHandles.filterValue(intHandle, CTX_S2I, CTX_I2S);
         i2SHandle = VarHandles.insertCoordinates(i2SHandle, 2, "a", "b");
         i2SHandle.set(segment, 0L, "1");
@@ -171,8 +172,8 @@ public class TestAdaptVarHandles {
     public void testBadFilterBoxPrefixCoordinates() {
         VarHandle intHandle = ValueLayout.JAVA_INT.varHandle();
         VarHandles.filterValue(intHandle,
-                MethodHandles.dropArguments(S2I, 1, int.class),
-                MethodHandles.dropArguments(I2S, 1, long.class));
+                Handles.dropArguments(S2I, 1, int.class),
+                Handles.dropArguments(I2S, 1, long.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
