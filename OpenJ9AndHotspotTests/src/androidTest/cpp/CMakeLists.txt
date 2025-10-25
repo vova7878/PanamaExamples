@@ -77,6 +77,13 @@ add_library(
         # Provides a relative path to source file(s).
         hotspot/libNull.c
 )
+add_library(
+        VarArgs # Sets the name of the library.
+        SHARED # Sets the library as a shared library.
+
+        # Provides a relative path to source file(s).
+        hotspot/libVarArgs.c
+)
 
 add_library(
         clinkerffitests # Sets the name of the library.

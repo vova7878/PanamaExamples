@@ -57,12 +57,12 @@ public class CallGeneratorHelper extends NativeTestHelper {
     static final int MAX_PARAMS = 3;
     static final int CHUNK_SIZE = 600;
 
-    enum Ret {
+    public enum Ret {
         VOID,
         NON_VOID
     }
 
-    enum StructFieldType {
+    public enum StructFieldType {
         INT("int", C_INT),
         FLOAT("float", C_FLOAT),
         DOUBLE("double", C_DOUBLE),
@@ -76,7 +76,7 @@ public class CallGeneratorHelper extends NativeTestHelper {
             this.layout = layout;
         }
 
-        MemoryLayout layout() {
+        public MemoryLayout layout() {
             return layout;
         }
 
@@ -91,7 +91,7 @@ public class CallGeneratorHelper extends NativeTestHelper {
         }
     }
 
-    enum ParamType {
+    public enum ParamType {
         INT("int", C_INT),
         FLOAT("float", C_FLOAT),
         DOUBLE("double", C_DOUBLE),
@@ -106,13 +106,13 @@ public class CallGeneratorHelper extends NativeTestHelper {
             this.layout = layout;
         }
 
-        String type(List<StructFieldType> fields) {
+        public String type(List<StructFieldType> fields) {
             return this == STRUCT ?
                     typeStr + "_" + sigCode(fields) :
                     typeStr;
         }
 
-        MemoryLayout layout(List<StructFieldType> fields) {
+        public MemoryLayout layout(List<StructFieldType> fields) {
             if (this == STRUCT) {
                 return MemoryLayout.paddedStructLayout(
                         IntStream.range(0, fields.size())
