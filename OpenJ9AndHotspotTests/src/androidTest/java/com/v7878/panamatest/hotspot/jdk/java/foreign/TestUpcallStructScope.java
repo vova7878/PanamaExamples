@@ -22,18 +22,19 @@
  *
  */
 
-package com.v7878.panamatest.hotspot;
+package com.v7878.panamatest.hotspot.jdk.java.foreign;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.v7878.foreign.Arena;
 import com.v7878.foreign.FunctionDescriptor;
 import com.v7878.foreign.MemorySegment;
 import com.v7878.invoke.Handles;
+import com.v7878.panamatest.hotspot.NativeTestHelper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -80,7 +81,7 @@ public class TestUpcallStructScope extends NativeTestHelper {
     }
 
     @Test
-    public void testUpcall() throws Throwable {
+    void testUpcall() throws Throwable {
         AtomicReference<MemorySegment> capturedSegment = new AtomicReference<>();
         MethodHandle target = methodHandle(capturedSegment::set);
         FunctionDescriptor upcallDesc = FunctionDescriptor.ofVoid(S_PDI_LAYOUT);
@@ -91,12 +92,11 @@ public class TestUpcallStructScope extends NativeTestHelper {
         }
 
         MemorySegment captured = capturedSegment.get();
-        System.out.println(captured.scope());
         assertFalse(captured.scope().isAlive());
     }
 
     @Test
-    public void testOtherPointer() throws Throwable {
+    void testOtherPointer() throws Throwable {
         AtomicReference<MemorySegment> capturedSegment = new AtomicReference<>();
         MethodHandle target = methodHandle((unused, addr) -> capturedSegment.set(addr));
         FunctionDescriptor upcallDesc = FunctionDescriptor.ofVoid(S_PDI_LAYOUT, C_POINTER);
