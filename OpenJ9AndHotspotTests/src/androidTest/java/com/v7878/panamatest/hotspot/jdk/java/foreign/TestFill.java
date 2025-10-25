@@ -21,7 +21,7 @@
  * questions.
  */
 
-package com.v7878.panamatest.hotspot.jdk.java.foreign.foreign;
+package com.v7878.panamatest.hotspot.jdk.java.foreign;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

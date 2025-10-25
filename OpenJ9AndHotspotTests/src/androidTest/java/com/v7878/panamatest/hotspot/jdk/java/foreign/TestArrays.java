@@ -22,7 +22,7 @@
  *
  */
 
-package com.v7878.panamatest.hotspot.jdk.java.foreign.foreign;
+package com.v7878.panamatest.hotspot.jdk.java.foreign;
 
 import static com.v7878.foreign.ValueLayout.JAVA_BYTE;
 import static com.v7878.foreign.ValueLayout.JAVA_CHAR;
