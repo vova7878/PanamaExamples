@@ -21,36 +21,35 @@
  * questions.
  */
 
-package com.v7878.panamatest.hotspot;
+package com.v7878.panamatest.hotspot.jdk.java.foreign.foreign;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import com.v7878.foreign.Arena;
 import com.v7878.foreign.ValueLayout;
 import com.v7878.foreign.WrongThreadException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-@RunWith(DataProviderRunner.class)
-public final class TestFill {
+public class TestFill {
 
     // Make sure negative values are treated as expected
     private static final byte VALUE = -71;
 
-    @Test
-    @UseDataProvider("sizes")
-    public void testFill(int len) {
+    @ParameterizedTest
+    @MethodSource("sizes")
+    void testFill(int len) {
         int offset = 16;
         int expandedLen = offset + MAX_SIZE + offset;
 
@@ -72,32 +71,31 @@ public final class TestFill {
         }
     }
 
-    @Test
-    @UseDataProvider("values")
-    public void testValues(int value) {
+    @ParameterizedTest
+    @MethodSource("values")
+    void testValues(int value) {
         int size = 0b1111;
         try (var arena = Arena.ofConfined()) {
             var segment = arena.allocate(size);
             segment.fill((byte) value);
-            assertTrue("Failed to fill with value " + value,
-                    segment.elements(ValueLayout.JAVA_BYTE)
-                            .map(s -> s.get(ValueLayout.JAVA_BYTE, 0))
-                            .allMatch(v -> v == value));
+            assertTrue(segment.elements(ValueLayout.JAVA_BYTE)
+                    .map(s -> s.get(ValueLayout.JAVA_BYTE, 0))
+                    .allMatch(v -> v == value), "Failed to fill with value " + value);
         }
     }
 
-    @Test
-    @UseDataProvider("sizes")
-    public void testReadOnly(int len) {
+    @ParameterizedTest
+    @MethodSource("sizes")
+    void testReadOnly(int len) {
         try (var arena = Arena.ofConfined()) {
             var segment = arena.allocate(len).asReadOnly();
             assertThrows(IllegalArgumentException.class, () -> segment.fill(VALUE));
         }
     }
 
-    @Test
-    @UseDataProvider("sizes")
-    public void testConfinement(int len) {
+    @ParameterizedTest
+    @MethodSource("sizes")
+    void testConfinement(int len) {
         try (var arena = Arena.ofConfined()) {
             var segment = arena.allocate(len);
             AtomicReference<RuntimeException> ex = new AtomicReference<>();
@@ -109,13 +107,13 @@ public final class TestFill {
                 }
             });
             future.join();
-            assertTrue(ex.get() instanceof WrongThreadException);
+            assertInstanceOf(WrongThreadException.class, ex.get());
         }
     }
 
-    @Test
-    @UseDataProvider("sizes")
-    public void testScope(int len) {
+    @ParameterizedTest
+    @MethodSource("sizes")
+    void testScope(int len) {
         var arena = Arena.ofConfined();
         var segment = arena.allocate(len);
         arena.close();
@@ -124,17 +122,16 @@ public final class TestFill {
 
     private static final int MAX_SIZE = 1 << 10;
 
-    @DataProvider(format = "%m[%i]")
-    public static Object[][] sizes() {
+    private static Stream<Arguments> sizes() {
         return IntStream.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 23, 32, 63, 128, 256, 511, MAX_SIZE)
-                .mapToObj(value -> new Object[]{value})
-                .toArray(Object[][]::new);
+                .boxed()
+                .map(Arguments::of);
     }
 
-    @DataProvider(format = "%m[%i]")
-    public static Object[][] values() {
+    private static Stream<Arguments> values() {
         return IntStream.rangeClosed(Byte.MIN_VALUE, Byte.MAX_VALUE)
-                .mapToObj(value -> new Object[]{value})
-                .toArray(Object[][]::new);
+                .boxed()
+                .map(Arguments::of);
     }
+
 }
