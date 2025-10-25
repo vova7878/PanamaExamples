@@ -1,10 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.android.junit5)
 }
 
 android {
     namespace 'com.v7878.panamatest'
-    compileSdk 36
+    compileSdk = 36
 
     defaultConfig {
         applicationId "com.v7878.panamatest"
@@ -13,7 +14,8 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
 
         externalNativeBuild {
             cmake {
@@ -45,6 +47,15 @@ dependencies {
     androidTestImplementation(libs.junit4.dataprovider) {
         exclude group: 'com.tngtech.junit.dataprovider', module: 'junit-dataprovider-core'
     }
-    androidTestImplementation(libs.androidx.runner)
+
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.junit.jupiter.api)
+    androidTestRuntimeOnly(libs.junit.jupiter.engine)
+
+    androidTestImplementation(libs.junit.jupiter.params)
+
+    androidTestImplementation(libs.android.test.core)
+    androidTestRuntimeOnly(libs.android.test.runner)
+
     implementation libs.androidpanama
 }

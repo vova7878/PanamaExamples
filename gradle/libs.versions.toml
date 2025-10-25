@@ -1,20 +1,40 @@
 [versions]
-agp = "8.11.1"
-androidpanama = "7acf1fb21d"
-appcompat = "1.7.1"
+agp = "8.13.0"
+androidpanama = "bfbb15f4bc"
+
+android-junit5 = "1.14.0.0"
+androidTestCore = "1.9.0"
+androidTestRunner = "1.9.0"
+
+#noinspection NewerVersionAvailable
+junitJupiterApi = "5.14.0"
+
 junit4Dataprovider = "2.10"
-material = "1.12.0"
-constraintlayout = "2.2.1"
+
 runner = "1.7.0"
+
+appcompat = "1.7.1"
+material = "1.13.0"
+constraintlayout = "2.2.1"
 
 [libraries]
 androidpanama = { module = "com.github.vova7878.PanamaPort:AndroidPanama", version.ref = "androidpanama" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+
+android-test-core = { module = "de.mannodermaus.junit5:android-test-core", version.ref = "androidTestCore" }
+android-test-runner = { module = "de.mannodermaus.junit5:android-test-runner", version.ref = "androidTestRunner" }
+
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterApi" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junitJupiterApi" }
+
 junit4-dataprovider = { module = "com.tngtech.junit.dataprovider:junit4-dataprovider", version.ref = "junit4Dataprovider" }
+
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "runner" }
+
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-
+android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "android-junit5" }

@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'com.v7878.hellopanama'
-    compileSdk 36
+    compileSdk = 36
 
     defaultConfig {
         applicationId "com.v7878.hellopanama"
